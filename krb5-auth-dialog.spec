@@ -6,7 +6,7 @@
 Summary: Kerberos 5 authentication dialog
 Name: krb5-auth-dialog
 Version: 0.13
-Release: 3%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Group: User Interface/X
 URL: https://honk.sigxcpu.org/piki/projects/krb5-auth-dialog/
@@ -31,6 +31,12 @@ Requires(preun): GConf2
 # https://bugzilla.gnome.org/show_bug.cgi?id=599725
 Patch0: seriesid-clash.patch
 
+# https://bugzilla.redhat.com/show_bug.cgi?id=848026
+Patch1: krb5-auth-dialog-0.13-fix-creds-memory-leak.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=1183714
+Patch2: krb5-auth-dialog-0.13-mycred-init.patch
+
 %description
 This package contains a dialog that warns the user when their Kerberos
 tickets are about to expire and lets them renew them.
@@ -38,6 +44,8 @@ tickets are about to expire and lets them renew them.
 %prep
 %setup -q
 %patch0 -p1 -b .seriesid
+%patch1 -p1 -b .creds-leak
+%patch2 -p1 -b .creds-init
 
 %build
 %configure
@@ -97,6 +105,12 @@ fi
 gtk-update-icon-cache %{_datadir}/icons/hicolor >&/dev/null || :
 
 %changelog
+* Thu Apr 09 2015 David King <dking@redhat.com> - 0.13-5
+- Fix credentials initialization (#1183714)
+
+* Tue Jan 13 2015 David King <dking@redhat.com> - 0.13-4
+- Fix credentials memory leak (#848026)
+
 * Wed Jun 30 2010 Matthias Clasen <mclasen@redhat.com> - 0.13-3
 - Update icon caches
 Resolves: #609270
