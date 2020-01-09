@@ -6,7 +6,7 @@
 Summary: Kerberos 5 authentication dialog
 Name: krb5-auth-dialog
 Version: 0.13
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv2+
 Group: User Interface/X
 URL: https://honk.sigxcpu.org/piki/projects/krb5-auth-dialog/
@@ -37,6 +37,9 @@ Patch1: krb5-auth-dialog-0.13-fix-creds-memory-leak.patch
 # https://bugzilla.redhat.com/show_bug.cgi?id=1183714
 Patch2: krb5-auth-dialog-0.13-mycred-init.patch
 
+# https://bugzilla.redhat.com/show_bug.cgi?id=1326706
+Patch3: krb5-auth-dialog-0.13-avoid-endlessly-renewing-credentials.patch
+
 %description
 This package contains a dialog that warns the user when their Kerberos
 tickets are about to expire and lets them renew them.
@@ -46,6 +49,7 @@ tickets are about to expire and lets them renew them.
 %patch0 -p1 -b .seriesid
 %patch1 -p1 -b .creds-leak
 %patch2 -p1 -b .creds-init
+%patch3 -p1 -b .avoid-endless-renewals
 
 %build
 %configure
@@ -105,6 +109,10 @@ fi
 gtk-update-icon-cache %{_datadir}/icons/hicolor >&/dev/null || :
 
 %changelog
+* Wed Oct 26 2016 Debarshi Ray <rishi@fedoraproject.org> - 0.13-6
+- Avoid endlessly renewing credentials if their lifetimes are too short
+Resolves: #1326706
+
 * Thu Apr 09 2015 David King <dking@redhat.com> - 0.13-5
 - Fix credentials initialization (#1183714)
 
